@@ -33,7 +33,6 @@
 			if(event.target.hash !==""){
 				event.preventDefault();
 				const hash = event.target.hash;
-				console.log(hash);
 				// deactivate existing active sections
 				document.querySelector(".section.active").classList.add("hide");
 				document.querySelector(".section.active").classList.remove("active");
@@ -156,6 +155,15 @@ function bodyScrollingToggle(){
 			screenshots = portfolioItems[itemIndex].querySelector(".portfolio-item-img img").getAttribute("data-screenshots");
 			// convert screenshots into array
 			screenshots = screenshots.split(",");
+
+			// Reset slideIndex and scrollcount when opening a new project
+			slideIndex = 0;
+			scrollcount = 1; // Clear out previous images in the slider div
+			div.style.marginLeft = "0px";
+
+			const popupImgContainer = popup.querySelector(".pp-img");
+			popupImgContainer.innerHTML = ""; // Clear previous images
+
 			if(screenshots.length === 1){
 				prevBtn.style.display="none";
 				nextBtn.style.display="none"
@@ -164,7 +172,6 @@ function bodyScrollingToggle(){
 				prevBtn.style.display="block";
 				nextBtn.style.display="block"
 			}
-			slideIndex = 0;
 			popupToggle();
 			popupSlideShow();
 			popupDetails();
@@ -177,6 +184,8 @@ function bodyScrollingToggle(){
 		if(projectDetailsContainer.classList.contains("active")){
 			popupDetailsToggle();
 		}
+		slideIndex = 0;
+		scrollcount = 1; 
 	})
 
 	function popupToggle(){
@@ -188,22 +197,14 @@ function bodyScrollingToggle(){
 		const imgSrc = screenshots[slideIndex];
 		const popupImg = popup.querySelector(".pp-img");
 		div.innerHTML = "";
-		console.log(screenshots);
 		for(i=0;i<screenshots.length;i++){
 			div.innerHTML += "<img src='"+ screenshots[i] +"' alt='img' class='pp-img outer-shadow'>"
 		}
 		imgstyle = window.getComputedStyle(div.querySelector(".pp-img"));
 
-
-
-
 		// activate loader unitll the popupImg loaded
 		popup.querySelector(".pp-loader").classList.add("active");
-		
-		
 		popupImg.src=imgSrc;
-		
-		
 		
 		popupImg.onload = () =>{
 			// deactivate loader after the popupImg loaded 
@@ -216,29 +217,30 @@ function bodyScrollingToggle(){
 	nextBtn.addEventListener("click", ()=>{
 		
 		if(scrollcount <= screenshots.length - imgfit){
-			//console.log( parseInt(divstyle.marginLeft));
-			//console.log(imgstyle.width + (2*(parseInt(imgstyle.marginLeft))));
 			div.style.marginLeft = ""+ parseInt(divstyle.marginLeft) - (parseInt(imgstyle.width) + (2*(parseInt(imgstyle.marginLeft))))+"px";
-			console.log(parseInt(divstyle.marginLeft) - (parseInt(imgstyle.width) + (2*(parseInt(imgstyle.marginLeft)))));
 			scrollcount ++;
+			slideIndex ++;
 		}
 		else{
 			div.style.marginLeft = "0";
 			scrollcount = 1;
+			slideIndex =0;
 		}
+		updateCounter(); 
 	})
+
+	function updateCounter() {
+		popup.querySelector(".pp-counter").innerHTML = (slideIndex+1) + " of " + screenshots.length;
+	}
 
 	//  prev slide
 	prevBtn.addEventListener("click", ()=>{
 		if(scrollcount > 1){
-			console.log(imgstyle.width);
-			console.log(imgstyle.marginLeft);
-			console.log(scrollcount);
-			//div.style.marginLeft = "-341px";
-			console.log(parseInt(divstyle.marginLeft) + (parseInt(imgstyle.width) + (2*(parseInt(imgstyle.marginLeft)))));
 			div.style.marginLeft = "" + ( parseInt(divstyle.marginLeft) + (parseInt(imgstyle.width) + (2*(parseInt(imgstyle.marginLeft)))) ) + "px";
 			scrollcount --;
+			slideIndex --;
 		}
+		updateCounter(); 
 	})
 
 	function popupDetails(){
@@ -287,7 +289,6 @@ function bodyScrollingToggle(){
 // ------------------------------Testimonial slider -------------------//
 
 (()=>{
-	console.log("Rajat");
 	const sliderContainer = document.querySelector(".testi-slider-container"),
 	slides = sliderContainer.querySelectorAll(".testi-item"),
 	slideWidth = sliderContainer.offsetWidth,
@@ -298,7 +299,6 @@ function bodyScrollingToggle(){
 	let slideIndex = Array.from(activeSlide.parentElement.children).indexOf(activeSlide);
 	// set width of all slides
 	 slides.forEach((slide) =>{
-	 	console.log(slide);
 	 	slide.style.width = slideWidth +"px";
 	 })
 	 // set width of slider
@@ -348,7 +348,7 @@ function bodyScrollingToggle(){
 			section.classList.add("hide");
 		}
 	})
-	console.log(sections);
+
 })();
 
 
